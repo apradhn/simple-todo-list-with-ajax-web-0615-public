@@ -8,9 +8,7 @@ resources: 2
 
 ## Description
 
-This readme will walk you through the process of adding Ajax to a very simple rails todo list app. Instead of using `remote: true`, we'll be writing out our own jQuery Ajax requests and go through the whole process step by step. By the end of this tutorial, here's the functionality we'll have:
-
-<!-- INSERT DEMO HERE -->
+This readme will walk you through the process of adding Ajax to a very simple rails todo list app. Instead of using `remote: true`, since we want to get a better understanding of how Ajax works, we'll be writing out our own jQuery Ajax requests to add and remove items without reloading the page.
 
 ## The Basic Rails Todo App
 
@@ -100,7 +98,7 @@ end
 
 7. Before starting up the rails server: `rake db:migrate`.
 
-Now we can create new todos and destroy them. This is as functional as our app needs to be. Except for one thing. Since this is a single page app, it would be really nice if we could add and remove todos without refreshing the page. Enter Ajax!
+Now we can create new todos and destroy them. This is as functional as our app needs to be. Except for one thing. Since this is a single page app, it would be really nice if we could add and remove todos without reloading the page. Enter Ajax!
 
 ## Adding Ajax
 
