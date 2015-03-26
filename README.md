@@ -298,6 +298,48 @@ Make that file and throw a debugger in there to confirm that it's actually where
 ![new create.js.erb file](./images/create-js-erb-1.png)
 ![debugger in create.js.erb](./images/js-console-5.png)
 
+That worked! So now that we are in create.js.erb, we have access to any instance variables we created in the controller action that led us there, and we can write JavaScript and ERB (embedded Ruby) code to do whatever we want with our view. We should probably save our newly created todo in an instance variable for just that purpose.
+
+```ruby
+def create
+  @todo = Todo.create(todo_params)
+
+  respond_to do |format|
+    format.html { redirect_to root_path }
+    format.js { }
+  end
+end
+```
+
+So what do we want to do next? In create.js.erb, we want to use JavaScript (or jQuery) to append the new todo to the `<ul>` where the todos live on the page.
+
+We could do something like this:
+
+```javascript
+var html = "<li><%= @todo.description %><br><strong>priority: </strong> <%= @todo.priority %><br><%= escape_javascript link_to 'done', todo_path(@todo), method: 'delete' %></li>";
+
+$('ul').append(html);
+```
+
+Now, when we enter a new todo description and priority and hit the submit button, it appears on the page and no reloading happens! That's great, but it could use some refactoring.
+
+1. It's not DRY: we basically copied and pasted code from of our index.html.erb. If the way we want to render todos ever changes, we now have to change it in two places.
+2. It's ugly. That html string is pretty hard to read, and what's that `escape_javascript` doing in there? We need that or the link_to will be evaluated as JavaScript and the whole thing breaks.
+
+The solution to this? A partial. Extract the code for displaying a single todo out of index.html.erb and place it in  a new file at `app/views/todos/_todo.html.erb`:
+
+![todo partial](./images/todo-partial.png)
+
+Now you can use Rails magic to render the `@todos` collection in index.html.erb:
+
+![index using todo partial](./images/index-with-render-collection.png)
+
+Finally, replace the html string we had in create.js.erb with code for rendering the partial, passing in `@todo` as a local variable:
+
+![create.js.erb using partial](./images/create-js-erb-2.png)
+
+And we're done creating todos with Ajax! In the next section, we'll ajaxify destroying them.
+
 ### Deleting a Todo with Ajax
 
 ## Resources
