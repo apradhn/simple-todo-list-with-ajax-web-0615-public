@@ -123,7 +123,7 @@ In `app/assets/javascripts/todos.js`:
 // This is shorthand for $( document ).ready(function() { })
 $(function(){
   
-})
+});
 ```
 
 2. Listen for the submission of the form.
@@ -132,8 +132,8 @@ $(function(){
   $("form").submit(function(){
     // this debugger should be hit when you click the submit button!
     debugger
-  })
-})
+  });
+});
 ```
 
 3. Prevent the default behavior (the form submitting and the page reloading).
@@ -144,8 +144,8 @@ $(function(){
 
     // this debugger should be hit when you click the submit button!
     debugger
-  })
-})
+  });
+});
 ```
 
 #### Grab Information From the Form
@@ -171,8 +171,8 @@ $(function(){
     var action = $(this).attr('action');
     var method = $(this).attr('method');
 
-  })
-})
+  });
+});
 ```
 
 Of course, we also need the text we entered into the form for the todo description and priority level. If we open up the form element and all the divs that live inside of it in our console, we see that Rails gave our inputs some nice ids that we can use to select them with. Specifically, there's an input with an id of "todo_description" and an input with an id of "todo_priority". Lets grab these using the jQuery [.find()](https://api.jquery.com/find/) method.
@@ -196,8 +196,8 @@ $(function(){
     var description = $(this).find('#todo_description').val();
     var priority = $(this).find('#todo_priority').val();
 
-  })
-})
+  });
+});
 ```
 We are ready for the next step!
 
@@ -211,7 +211,7 @@ $.ajax({
   method: "POST",
   url: "some.php",
   data: { name: "John", location: "Boston" }
-})
+});
 ```
 
 If we change the method, url, and data to the variables we created, we should be good to go! Our todos.js should now look like this:
@@ -231,10 +231,10 @@ $(function(){
       method: method,
       url: action,
       data: { description: description, priority: priority }
-    })
+    });
 
-  })
-})
+  });
+});
 
 ```
 
@@ -256,15 +256,14 @@ Here's what you'll see when that binding gets hit:
 Success! The Ajax request went where we wanted it to go and it sent the params through the way we told it to. But params is not quite right. Since we're using strong params, we need a nested structure where "todo" is a top level key. By changing our Ajax request to include `data: { todo: {description: description, priority: priority} }` this problem is solved, but there's actually a jQuery method, [.serializeArray()](https://api.jquery.com/serializeArray/), that will take care of turning all our form data into a nicely structured object (nesting included!) that we can use in our Ajax call. Here's how it looks in our code:
 
 ```javascript
-    // .serializeArray() can be called on any form element (and here, $(this) is our form)
-    var data = $(this).serializeArray();
+// .serializeArray() can be called on any form element (and here, $(this) is our form)
+var data = $(this).serializeArray();
 
-    $.ajax({
-      method: method,
-      url: action,
-      data: data,
-      dataType: 'script'
-    })
+$.ajax({
+  method: method,
+  url: action,
+  data: data
+});
 ```
 
 Now our params will be structured the way Rails expects them to be, and we can move on to the next step!
@@ -293,11 +292,11 @@ Before going further into what Rails will do with this JavaScript response, ther
 $.ajax({
   method: method,
   url: action,
-  data: { todo: {description: description, priority: priority} },
+  data: data,
 
   // this line makes the response format JavaScript and not html.
   dataType: 'script'
-})
+});
 ```
 
 So now that we're getting the response we want, what is `format.js { }` actually doing?
@@ -408,19 +407,17 @@ $(function(){
 
     var action = $(this).attr('action');
     var method = $(this).attr('method');
-
-    var description = $(this).find('#todo_description').val();
-    var priority = $(this).find('#todo_priority').val();
+    var data = $(this).serializeArray();
 
     $.ajax({
       method: method,
       url: action,
-      data: { todo: {description: description, priority: priority} },
+      data: data,
       dataType: 'script'
-    })
+    });
 
-  })
-})
+  });
+});
 ```
 
 #### After adding `remote: true`:
