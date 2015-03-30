@@ -370,7 +370,9 @@ So, what does `remote: true` do for you? In short, it adds a `data-remote="true"
 Now that we've added `remote: true` to the form, we can get rid of everything in our todos.js file.
 
 #### Before:
-```javascript app/assets/javascripts/todos.js
+```javascript
+// app/assets/javascripts/todos.js
+
 $(function(){
   $("form").submit(function(event){
     event.preventDefault();
