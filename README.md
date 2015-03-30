@@ -1,7 +1,7 @@
 ---
 tags: rails, javascript, ajax, jquery
 languages: ruby, javascript
-resources: 2
+resources: 3
 ---
 
 # Simple Todo List With Ajax
@@ -441,3 +441,4 @@ Test out your new skills by adding Ajax functionality for deleting todo items! T
 
 - [jQuery Documentation - jQuery.ajax()](http://api.jquery.com/jquery.ajax/)
 - [Learning About Ajax](http://blog.flatironschool.com/post/56146220219/learning-about-ajax)
+- [Rails Documentation - Working with JavaScript in Rails](http://guides.rubyonrails.org/working_with_javascript_in_rails.html)
