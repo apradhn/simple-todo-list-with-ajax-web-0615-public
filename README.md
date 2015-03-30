@@ -253,8 +253,21 @@ Here's what you'll see when that binding gets hit:
 
 ![params in pry](./images/pry-1.png)
 
-Success! The Ajax request went where we wanted it to go and it sent the params through the way we told it to. But params is not quite right. Since we're using strong params, we need a nested structure where "todo" is a top level key. By changing our Ajax request to include `data: { todo: {description: description, priority: priority} }`, this problem is solved and we're ready for the next step.
+Success! The Ajax request went where we wanted it to go and it sent the params through the way we told it to. But params is not quite right. Since we're using strong params, we need a nested structure where "todo" is a top level key. By changing our Ajax request to include `data: { todo: {description: description, priority: priority} }` this problem is solved, but there's actually a jQuery method, [.serializeArray()](https://api.jquery.com/serializeArray/), that will take care of turning all our form data into a nicely structured object (nesting included!) that we can use in our Ajax call. Here's how it looks in our code:
 
+```javascript
+    // .serializeArray() can be called on any form element (and here, $(this) is our form)
+    var data = $(this).serializeArray();
+
+    $.ajax({
+      method: method,
+      url: action,
+      data: data,
+      dataType: 'script'
+    })
+```
+
+Now our params will be structured the way Rails expects them to be, and we can move on to the next step!
 
 #### Handle the Response
 
@@ -336,7 +349,7 @@ Finally, replace the html string we had in create.js.erb with code for rendering
 
 ![create.js.erb using partial](./images/create-js-erb-2.png)
 
-And we're done creating todos with Ajax! If you're feeling ambitious, try to implement the functionality for deleting items with Ajax as well. In the next section, we'll refactor our code by using `remote: true`.
+And we're done creating todos with Ajax! In the next section, we'll refactor our code by using `remote: true`.
 
 ### Refactoring with `remote: true`
 
@@ -367,7 +380,23 @@ In the case of our example, we will add `remote: true` to our form for creating 
 ```
 So, what does `remote: true` do for you? In short, it adds a `data-remote="true"` attribute to the generated html form, and submits the form via Ajax automagically. As with everything in Rails, there's metaprogramming going on under the hood. In this case, the JavaScript code that we wrote to hijack the click event and make the appropriate Ajax request is all generated for you behind the scenes. If you're feeling extra curious, check out the [Rails.js source code](https://github.com/rails/jquery-ujs/blob/148571ded762f22ccca84db38d4b4d56853ab395/src/rails.js).
 
-Now that we've added `remote: true` to the form, we can get rid of everything in our todos.js file.
+Here's a small snippet from the source code linked to above. Not so surprisingly, it looks a lot like the code we wrote (especially lines 2-4!):
+
+```javascript
+if (element.is('form')) {
+  method = element.attr('method');
+  url = element.attr('action');
+  data = element.serializeArray();
+  // memoized value from clicked submit button
+  var button = element.data('ujs:submit-button');
+  if (button) {
+    data.push(button);
+    element.data('ujs:submit-button', null);
+  }
+}
+```
+
+Because Rails is providing all of this JavaScript for us, now that we've added `remote: true` to the form, we can get rid of everything in our todos.js file.
 
 #### Before adding `remote: true`:
 ```javascript
@@ -402,8 +431,11 @@ $(function(){
 
 Just like when we manually wrote out the Ajax call, when the form is submitted the default behavior will be prevented and a JavaScript response will be sent to the create action in the todos controller. It will then go to app/views/todos/create.js.erb, just as it did before. We will leave the rest of our code as is, and we are done with our refactoring!
 
+### Bonus
 
+Test out your new skills by adding Ajax functionality for deleting todo items! Try following the steps outlined in the first section of this walkthrough and writing out your Ajax request by hand, and then abstract it all away with `remote: true`. Have fun ajaxifying all the things!
 
+![Ajaxify all the things!](./images/ajaxify-all-the-things.jpg)
 
 ## Resources
 
