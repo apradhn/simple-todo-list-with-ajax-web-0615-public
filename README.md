@@ -369,7 +369,7 @@ So, what does `remote: true` do for you? In short, it adds a `data-remote="true"
 
 Now that we've added `remote: true` to the form, we can get rid of everything in our todos.js file.
 
-#### Before:
+#### Before adding `remote: true`:
 ```javascript
 // app/assets/javascripts/todos.js
 
@@ -393,6 +393,17 @@ $(function(){
   })
 })
 ```
+
+#### After adding `remote: true`:
+```javascript
+// app/assets/javascripts/todos.js
+
+```
+
+Just like when we manually wrote out the Ajax call, when the form is submitted the default behavior will be prevented and a JavaScript response will be sent to the create action in the todos controller. It will then go to app/views/todos/create.js.erb, just as it did before. We will leave the rest of our code as is, and we are done with our refactoring!
+
+
+
 
 ## Resources
 
