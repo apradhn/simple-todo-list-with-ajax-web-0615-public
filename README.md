@@ -67,7 +67,7 @@ Before getting to Ajax, here are the steps to create the basic rails todo app we
 
 6. Create `views/todos/index.html.erb` with a basic form and list of todos:
 
-```ruby
+  ```ruby
   <h1>My Todos</h1>
 
   <%= form_for Todo.new do |f| %>
