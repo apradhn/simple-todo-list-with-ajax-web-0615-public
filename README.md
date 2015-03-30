@@ -8,7 +8,7 @@ resources: 2
 
 ## Description
 
-This readme will walk you through the process of adding Ajax to a very simple rails todo list app. Instead of using `remote: true`, since we want to get a better understanding of how Ajax works, we'll be writing out our own jQuery Ajax requests to add and remove items without reloading the page.
+This readme will walk you through the process of adding Ajax to a very simple rails todo list app. Instead of using `remote: true`, since we want to get a better understanding of how Ajax works, we'll be writing out our own jQuery Ajax request to add items without reloading the page. Then, we'll refactor with `remote: true`.
 
 ## The Basic Rails Todo App
 
@@ -336,9 +336,61 @@ Finally, replace the html string we had in create.js.erb with code for rendering
 
 ![create.js.erb using partial](./images/create-js-erb-2.png)
 
-And we're done creating todos with Ajax! In the next section, we'll ajaxify destroying them.
+And we're done creating todos with Ajax! If you're feeling ambitious, try to implement the functionality for deleting items with Ajax as well. In the next section, we'll refactor our code by using `remote: true`.
 
-### Deleting a Todo with Ajax
+### Refactoring with `remote: true`
+
+In Rails, both `form_for` and `link_to` elements can take an argument of `remote: true`:
+
+#### Example: `link_to` with `remote: true`
+```ruby
+<%= link_to 'Update Something', edit_something_path(@something), remote: true %>
+```
+
+In the case of our example, we will add `remote: true` to our form for creating a new todo (the only change here is on the first line of the form):
+
+```ruby
+<%= form_for Todo.new, remote: true do |f| %>
+  <div class="form-group">
+    <%= f.text_field :description, placeholder: 
+    "what needs doing?" %>
+  </div>
+
+  <div class="form-group">
+    <%= f.text_field :priority, placeholder: "priority level" %>
+  </div>
+
+  <div class="form-group">
+  <%= f.submit %>
+  </div>
+<% end %>
+```
+So, what does `remote: true` do for you? In short, it adds a `data-remote="true"` attribute to the generated html form, and submits the form via Ajax automagically. As with everything in Rails, there's metaprogramming going on under the hood. In this case, the JavaScript code that we wrote to hijack the click event and make the appropriate Ajax request is all generated for you behind the scenes. If you're feeling extra curious, check out the [Rails.js source code](https://github.com/rails/jquery-ujs/blob/148571ded762f22ccca84db38d4b4d56853ab395/src/rails.js).
+
+Now that we've added `remote: true` to the form, we can get rid of everything in our todos.js file.
+
+#### Before:
+```javascript app/assets/javascripts/todos.js
+$(function(){
+  $("form").submit(function(event){
+    event.preventDefault();
+
+    var action = $(this).attr('action');
+    var method = $(this).attr('method');
+
+    var description = $(this).find('#todo_description').val();
+    var priority = $(this).find('#todo_priority').val();
+
+    $.ajax({
+      method: method,
+      url: action,
+      data: { todo: {description: description, priority: priority} },
+      dataType: 'script'
+    })
+
+  })
+})
+```
 
 ## Resources
 
