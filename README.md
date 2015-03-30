@@ -110,7 +110,7 @@ Here's what we are going to implement:
 
 When the "Create Todo" button is clicked, we will stop the default form submission behavior from happening, and send an Ajax request instead. To break this down further, here are the steps we'll need to follow:
 
-1. Create an event listener for the 'click' event.
+1. Create an event listener for the 'click' event (or for the submission of the form) that loads when the document is ready and prevents the default behavior from happening (stops the page from reloading).
 2. Grab some information from the form to use in our Ajax request.
 3. Make the Ajax request.
 4. Handle the response and add the new todo to the page.
@@ -159,7 +159,7 @@ The `debugger` we threw into our code above will be really useful in figuring ou
 
 ![`this` in the console](./images/js-console-1.png)
 
-Since our debugger is inside the function that's attached to the form submission, `this` is the form itself! And the action and method we need are right there. Let's use jQuery to grab them, using the handy jQuery [.attr() method](https://api.jquery.com/attr/).
+Since our debugger is inside the function that's attached to the form submission, `this` is the form itself, and the action and method we need are right there! Let's use jQuery to grab them, using the handy [.attr()](https://api.jquery.com/attr/) method.
 
 ![`.attr()` in the console](./images/js-console-2.png)
 
@@ -333,8 +333,8 @@ $('ul').append(html);
 
 Now, when we enter a new todo description and priority and hit the submit button, it appears on the page and no reloading happens! That's great, but it could use some refactoring.
 
-1. It's not DRY: we basically copied and pasted code from of our index.html.erb. If the way we want to render todos ever changes, we now have to change it in two places.
-2. It's ugly. That html string is pretty hard to read, and what's that `escape_javascript` doing in there? We need that or the link_to will be evaluated as JavaScript and the whole thing breaks.
+1. It's not DRY: we basically copied and pasted code from our index.html.erb. If the way we want to render todos ever changes, we now have to change it in two places.
+2. It's ugly. That html string is pretty hard to read, and what's that `escape_javascript` doing in there? We need that or the `link_to` will be evaluated as JavaScript and the whole thing breaks.
 
 The solution to this? A partial. Extract the code for displaying a single todo out of index.html.erb and place it in  a new file at `app/views/todos/_todo.html.erb`:
 
@@ -352,11 +352,11 @@ And we're done creating todos with Ajax! In the next section, we'll refactor our
 
 ### Refactoring with `remote: true`
 
-In Rails, both `form_for` and `link_to` elements can take an argument of `remote: true`:
+In Rails, both `form_for` and `link_to` helpers can take an argument of `remote: true`:
 
 #### Example: `link_to` with `remote: true`
 ```ruby
-<%= link_to 'Update Something', edit_something_path(@something), remote: true %>
+<%= link_to 'Show Something', something_path(@something), remote: true %>
 ```
 
 In the case of our todo list app, we will add `remote: true` to our form for creating a new todo (the only change here is on the first line of the form):
@@ -377,7 +377,7 @@ In the case of our todo list app, we will add `remote: true` to our form for cre
   </div>
 <% end %>
 ```
-So, what does `remote: true` do for you? In short, it adds a `data-remote="true"` attribute to the generated html form, and submits the form via Ajax automagically. As with everything in Rails, there's metaprogramming going on under the hood. In this case, the JavaScript code that we wrote to hijack the click event and make the appropriate Ajax request is all generated for you behind the scenes. If you're feeling extra curious, check out the [Rails.js source code](https://github.com/rails/jquery-ujs/blob/148571ded762f22ccca84db38d4b4d56853ab395/src/rails.js).
+So, what does `remote: true` do for you? In short, it adds a `data-remote="true"` attribute to the generated html form as seen [here](http://guides.rubyonrails.org/working_with_javascript_in_rails.html#form-for), and submits the form via Ajax automagically. As with everything in Rails, there's metaprogramming going on under the hood. In this case, the JavaScript code that we wrote to hijack the submit event and make the appropriate Ajax request is all generated for you behind the scenes. If you're feeling extra curious, check out the [Rails.js source code](https://github.com/rails/jquery-ujs/blob/148571ded762f22ccca84db38d4b4d56853ab395/src/rails.js).
 
 Here's a small snippet from the source code linked to above. Not so surprisingly, it looks a lot like the code we wrote (especially lines 2-4!):
 
@@ -426,7 +426,7 @@ $(function(){
 
 ```
 
-Just like when we manually wrote out the Ajax call, when the form is submitted the default behavior will be prevented and a JavaScript response will be sent to the create action in the todos controller. It will then go to app/views/todos/create.js.erb, just as it did before. We will leave the rest of our code as is, and we are done with our refactoring!
+Just like when we manually wrote out the Ajax call, when the form is submitted the default behavior will be prevented and a JavaScript response will be sent to the create action in the todos controller. The controller will then send us to app/views/todos/create.js.erb, just as it did before. We will leave the rest of our code as is, and we are done with our refactoring!
 
 ### Bonus
 
