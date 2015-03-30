@@ -8,93 +8,93 @@ resources: 3
 
 ## Description
 
-This readme will walk you through the process of adding Ajax to a very simple rails todo list app. Instead of using `remote: true`, since we want to get a better understanding of how Ajax works, we'll be writing out our own jQuery Ajax request to add items without reloading the page. Then, we'll refactor with `remote: true`.
+This readme will walk you through the process of adding Ajax to a very simple rails todo list app. Instead of using `remote: true` right off the bat, since we want to get a better understanding of how Ajax works, we'll be writing out our own jQuery Ajax request to add items without reloading the page. Then, we'll refactor with `remote: true`.
 
 ## The Basic Rails Todo App
 
-Before getting to Ajax, here are the steps that created the basic rails todo app we'll be building on:
+Before getting to Ajax, here are the steps to create the basic rails todo app we'll be building on:
 
 1. `rails new todo_app`
 2. `rails g resource todo`
 3. In the migration file (located in `db/migrate`):
 
-```ruby
-class CreateTodos < ActiveRecord::Migration
-  def change
-    create_table :todos do |t|
-      t.string :description
-      t.string :priority
-      t.timestamps null: false
+  ```ruby
+  class CreateTodos < ActiveRecord::Migration
+    def change
+      create_table :todos do |t|
+        t.string :description
+        t.string :priority
+        t.timestamps null: false
+      end
     end
   end
-end
-```
+  ```
 
 4. In `app/controllers/todos_controller.rb`:
 
-```ruby
-class TodosController < ApplicationController
-  def index
-    @todos = Todo.all
-  end
-
-  def create
-    Todo.create(todo_params)
-    redirect_to root_path
-  end
-
-  def destroy
-    todo = Todo.find(params[:id])
-    todo.destroy
-    redirect_to root_path
-  end
-
-  private
-    def todo_params
-      params.require(:todo).permit(:description, :priority)
+  ```ruby
+  class TodosController < ApplicationController
+    def index
+      @todos = Todo.all
     end
-end
-```
+
+    def create
+      Todo.create(todo_params)
+      redirect_to root_path
+    end
+
+    def destroy
+      todo = Todo.find(params[:id])
+      todo.destroy
+      redirect_to root_path
+    end
+
+    private
+      def todo_params
+        params.require(:todo).permit(:description, :priority)
+      end
+  end
+  ```
 
 5. In `config/routes.rb`:
 
-```ruby
-Rails.application.routes.draw do
-  root 'todos#index'
-  resources :todos
-end
-```
+  ```ruby
+  Rails.application.routes.draw do
+    root 'todos#index'
+    resources :todos
+  end
+  ```
 
 6. Create `views/todos/index.html.erb` with a basic form and list of todos:
 
 ```ruby
-<h1>My Todos</h1>
+  <h1>My Todos</h1>
 
-<%= form_for Todo.new do |f| %>
-  <div class="form-group">
-    <%= f.text_field :description, placeholder: 
-    "what needs doing?" %>
-  </div>
+  <%= form_for Todo.new do |f| %>
+    <div class="form-group">
+      <%= f.text_field :description, placeholder: 
+      "what needs doing?" %>
+    </div>
 
-  <div class="form-group">
-    <%= f.text_field :priority, placeholder: "priority level" %>
-  </div>
+    <div class="form-group">
+      <%= f.text_field :priority, placeholder: "priority level" %>
+    </div>
 
-  <div class="form-group">
-  <%= f.submit %>
-  </div>
-<% end %>
+    <div class="form-group">
+    <%= f.submit %>
+    </div>
+  <% end %>
 
-<ul>
-<% @todos.each do |todo| %>
-  <li>
-    <%= todo.description %><br>
-    <strong>priority: </strong><%= todo.priority %><br>
-    <%= link_to "done", todo_path(todo), method: 'delete' %>
-  </li>
-<% end %>
-</ul>
-```
+  <ul>
+  <% @todos.each do |todo| %>
+    <li>
+      <%= todo.description %><br>
+      <strong>priority: </strong><%= todo.priority %><br>
+      <%= link_to "done", todo_path(todo), method: 'delete' %>
+    </li>
+  <% end %>
+  </ul>
+  ```
 
 7. Before starting up the rails server: `rake db:migrate`.
 
@@ -119,34 +119,34 @@ When the "Create Todo" button is clicked, we will stop the default form submissi
 In `app/assets/javascripts/todos.js`:
 
 1. Make sure the document is ready before doing anything else.
-```javascript
-// This is shorthand for $( document ).ready(function() { })
-$(function(){
-  
-});
-```
+  ```javascript
+  // This is shorthand for $( document ).ready(function() { })
+  $(function(){
+    
+  });
+  ```
 
 2. Listen for the submission of the form.
-```javascript
-$(function(){
-  $("form").submit(function(){
-    // this debugger should be hit when you click the submit button!
-    debugger
+  ```javascript
+  $(function(){
+    $("form").submit(function(){
+      // this debugger should be hit when you click the submit button!
+      debugger
+    });
   });
-});
-```
+  ```
 
 3. Prevent the default behavior (the form submitting and the page reloading).
-```javascript
-$(function(){
-  $("form").submit(function(event){
-    event.preventDefault();
+  ```javascript
+  $(function(){
+    $("form").submit(function(event){
+      event.preventDefault();
 
-    // this debugger should be hit when you click the submit button!
-    debugger
+      // this debugger should be hit when you click the submit button!
+      debugger
+    });
   });
-});
-```
+  ```
 
 #### Grab Information From the Form
 In order to make the Ajax request, we'll need to give the request the correct action and method to take us to the create action in the todos controller. If we `rake routes`, we'll see this:
@@ -359,7 +359,7 @@ In Rails, both `form_for` and `link_to` elements can take an argument of `remote
 <%= link_to 'Update Something', edit_something_path(@something), remote: true %>
 ```
 
-In the case of our example, we will add `remote: true` to our form for creating a new todo (the only change here is on the first line of the form):
+In the case of our todo list app, we will add `remote: true` to our form for creating a new todo (the only change here is on the first line of the form):
 
 ```ruby
 <%= form_for Todo.new, remote: true do |f| %>
