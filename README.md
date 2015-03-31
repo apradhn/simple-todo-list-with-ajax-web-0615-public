@@ -131,7 +131,7 @@ In `app/assets/javascripts/todos.js`:
   $(function(){
     $("form").submit(function(){
       // this debugger should be hit when you click the submit button!
-      debugger
+      debugger;
     });
   });
   ```
@@ -143,7 +143,7 @@ In `app/assets/javascripts/todos.js`:
       event.preventDefault();
 
       // this debugger should be hit when you click the submit button!
-      debugger
+      debugger;
     });
   });
   ```
