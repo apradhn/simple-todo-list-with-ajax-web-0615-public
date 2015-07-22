@@ -159,7 +159,7 @@ The `debugger` we threw into our code above will be really useful in figuring ou
 
 ![`this` in the console](./images/js-console-1.png)
 
-Since our debugger is inside the function that's attached to the form submission, `this` is the form itself, and the action and method we need are right there! Let's use jQuery to grab them, using the handy [.attr()](https://api.jquery.com/attr/) method.
+Since our debugger is inside the function that's attached to the form submission, `this` is the form itself, and the action and method we need are right there! Let's use jQuery to grab them, using the handy [`.attr()`](https://api.jquery.com/attr/) method.
 
 ![`.attr()` in the console](./images/js-console-2.png)
 
@@ -253,7 +253,7 @@ Here's what you'll see when that binding gets hit:
 
 ![params in pry](./images/pry-1.png)
 
-Success! The Ajax request went where we wanted it to go and it sent the params through the way we told it to. But params is not quite right. Since we're using strong params, we need a nested structure where "todo" is a top level key. By changing our Ajax request to include `data: { todo: {description: description, priority: priority} }` this problem is solved, but there's actually a jQuery method, [.serializeArray()](https://api.jquery.com/serializeArray/), that will take care of turning all our form data into a nicely structured object (nesting included!) that we can use in our Ajax call. Here's how it looks in our code:
+Success! The Ajax request went where we wanted it to go and it sent the params through the way we told it to. But params is not quite right. Since we're using strong params, we need a nested structure where "todo" is a top level key. By changing our Ajax request to include `data: { todo: {description: description, priority: priority} }` this problem is solved, but there's actually a jQuery method, [`.serializeArray()`](https://api.jquery.com/serializeArray/), that will take care of turning all our form data into a nicely structured object (nesting included!) that we can use in our Ajax call. Here's how it looks in our code:
 
 ```javascript
 // .serializeArray() can be called on any form element (and here, $(this) is our form)
