@@ -175,11 +175,11 @@ $(function(){
 });
 ```
 
-Of course, we also need the text we entered into the form for the todo description and priority level. If we open up the form element and all the divs that live inside of it in our console, we see that Rails gave our inputs some nice ids that we can use to select them with. Specifically, there's an input with an id of "todo_description" and an input with an id of "todo_priority". Lets grab these using the jQuery [.find()](https://api.jquery.com/find/) method.
+Of course, we also need the text we entered into the form for the todo description and priority level. If we open up the form element and all the divs that live inside of it in our console, we see that Rails gave our inputs some nice ids that we can use to select them with. Specifically, there's an input with an id of "todo_description" and an input with an id of "todo_priority". Lets grab these using the jQuery [`.find()`](https://api.jquery.com/find/) method.
 
 ![.find() in the console](./images/js-console-3.png)
 
-We don't see the values that we typed into the form yet, but we can pull them out using the jQuery [.val()](https://api.jquery.com/val/) method.
+We don't see the values that we typed into the form yet, but we can pull them out using the jQuery [`.val()`](https://api.jquery.com/val/) method.
 
 ![.val() in the console](./images/js-console-4.png)
 
